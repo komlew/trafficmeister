@@ -1,0 +1,33 @@
+body {
+    margin: 15px 0 0;
+
+    background-color: #e16626;
+}
+
+.mainView {
+    width: 710px;
+    min-height: 300px;
+    margin: 0 auto;
+
+    background: white;
+    .mainView__spinner {
+        padding: 100px 0;
+
+        text-align: center;
+    }
+}
+
+.header,
+.controls,
+.list {
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    border: 5px solid #000;
+    &:first-child {
+        margin-left: 10px;
+    }
+    &:last-child {
+        margin-right: 10px;
+    }
+}

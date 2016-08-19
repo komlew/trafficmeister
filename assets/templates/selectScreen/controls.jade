@@ -1,0 +1,12 @@
+each item in order
+    .row
+        .col-md-4
+            label(for=item.name) #{item.label}
+        .col-md-8
+            select(disabled=!item.options, name=item.name, role='select2')
+                if item.options
+                    option(value='', selected=!item.value, disabled=!item.value) Select an option
+                    each option in item.options
+                        option(value=option selected=(item.value === option)) #{option}
+                else
+                    option Select an option

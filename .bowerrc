@@ -1,0 +1,7 @@
+{
+    "ignoredDependencies": [
+        "backbone.babysitter",
+        "backbone.wreqr",
+        "underscore"
+    ]
+}
