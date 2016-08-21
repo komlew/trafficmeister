@@ -1,8 +1,9 @@
 define([
     'backbone',
     'is',
+    'underscore',
     'collections/vehicles'
-], function (Backbone, is, VehiclesList) {
+], function (Backbone, is, _, VehiclesList) {
     'use strict';
 
     return Backbone.Model.extend({
@@ -33,22 +34,26 @@ define([
             return _.chain(result).unique().sortBy().value();
         },
 
-        setFilters: function () {
-            var self = this;
-            var edge;
-            var collection = this.get('collection').where({visible: true});
-            this.get('order').forEach(function (item) {
-                if (edge) {
+        setFilters: function (name) {
+            var items = this.get('order');
+            var getValues = this.getUniqueValues;
+            var collection = this.get('collection');
+            var resetAfter = _.findIndex(items, {name: name});
+
+            items.forEach(function (item, index) {
+                if (resetAfter >= 0 && index > resetAfter) {
                     delete item.options;
                     delete item.value;
-                    return;
                 }
-                if (!is.set(item.value) || is.empty(item.value)) {
-                    item.options = self.getUniqueValues(collection, item.name);
-                    edge = true;
+
+                var prevItem = items[index - 1];
+                if (is.set(prevItem) && is.string(prevItem.value)) {
+                    var filter = _.zipObject([prevItem.name], [prevItem.value]);
+                    item.options = getValues(collection.where(filter), item.name);
+                } else if (!is.set(prevItem)) {
+                    item.options = getValues(collection, item.name);
                 }
             });
         }
     });
-
 });

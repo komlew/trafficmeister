@@ -4,18 +4,19 @@ define([
     'backbone',
     'marionette',
     'bootbox',
+    'is',
     'dsf',
     'trafficMeister',
     'models/appModel',
     'views/loading',
     'views/general',
-    'views/controls'
-], function ($, _, Backbone, Marionette, bootbox, dsf, trafficMeister,
-            MainModel, LoadingView, GeneralView, ControlsView) {
+    'views/controls',
+    'views/list'
+], function ($, _, Backbone, Marionette, bootbox, is, dsf, trafficMeister,
+            MainModel, LoadingView, GeneralView, ControlsView, ListView) {
     'use strict';
 
-    var Controller = Marionette.Object.extend({
-
+    return Marionette.Object.extend({
         initialize: function () {
             this.spinner({
                 label: 'Fetching data...'
@@ -34,6 +35,7 @@ define([
             this.model.get('collection').on('sort', function () {
                 self.model.setFilters();
                 self.renderControls();
+                self.renderList();
             });
 
             $.when(this.addingRegions).done(function (regions) {
@@ -82,13 +84,13 @@ define([
             var self = this;
             trafficMeister.fetchData(function (err, data) {
                 if (err) {
-                    var retryText = ('Oops! Our server says: {err}.<br>' +
+                    var retryText = ('Oops! Our server returns: {err}.<br>' +
                             'We\'re doing our best to fix this. ' +
                             'Would you like to retry?').dsf({
                         err: err
                     });
-                    bootbox.confirm(retryText, function (result) {
-                        if (result) {
+                    bootbox.confirm(retryText, function (retry) {
+                        if (retry) {
                             self.fetchingData();
                         }
                     });
@@ -102,13 +104,61 @@ define([
             var self = this;
 
             var Controls = new ControlsView({
-                model: this.model
+                model: this.model,
+                filters: self.getFilters()
             }).on('rerender', function () {
                 self.renderControls();
+                self.renderList();
             });
             this.options.layout.get('controls').show(Controls);
+        },
+
+        getFilters: function () {
+            var filters = this.model.get('order').map(function (item) {
+                if (!is.array(item.options) || !is.string(item.value)) {
+                    return;
+                }
+                return [item.name, item.value];
+            });
+            return _.chain(filters).compact().zipObject().value();
+        },
+
+        renderList: function () {
+            var self = this;
+            var filters = this.getFilters();
+            var List = new ListView({
+                arrayFilters: {}
+            }).on('pickItem', function (filters) {
+                var order = self.model.get('order').map(function (item) {
+                    item.value = filters[item.name];
+                    if (!is.set(item.value)) {
+                        delete item.value;
+                    }
+                });
+                self.model.setFilters();
+                self.renderControls();
+                self.renderList();
+            });
+
+            if (is.empty(filters)) {
+                List.collection = this.model.get('collection');
+            } else {
+                var items = this.model.get('order');
+                var collection = this.model.get('collection').toJSON();
+                _.forOwn(filters, function (value, key) {
+                    var filter = _.zipObject([key], [value]);
+                    if (_.findWhere(items, {name: key}).format === 'string') {
+                        collection = _.where(collection, filter);
+                    } else {
+                        List.options.arrayFilters[key] = value;
+                        collection = _.filter(collection, function (item) {
+                            return _.includes(item[key], value);
+                        });
+                    }
+                });
+                List.collection = new Backbone.Collection(collection);
+            }
+            this.options.layout.get('list').show(List);
         }
     });
-
-    return Controller;
 });

@@ -8,5 +8,4 @@ define([
         model: VehicleModel,
         comparator: 'brand'
     });
-
 });

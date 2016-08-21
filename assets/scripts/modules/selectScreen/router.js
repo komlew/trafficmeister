@@ -4,11 +4,9 @@ define([
 ], function (Marionette, AppController) {
     'use strict';
 
-    var Router = Marionette.AppRouter.extend({
+    return Marionette.AppRouter.extend({
         appRoutes: {
             '': 'default'
         }
     });
-
-    return Router;
 });

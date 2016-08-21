@@ -11,7 +11,7 @@ var declare = require('gulp-declare');
 var merge = require('merge-stream');
 var fs = require('fs');
 var path = require('path');
-// require('es6-promise').polyfill();
+var Server = require('karma').Server;
 
 gulp.task('default', function () {
     // Default tasks
@@ -110,4 +110,13 @@ gulp.task('templates', function () {
             .pipe(gulp.dest('assets/scripts/templates'));
     });
     return merge(tasks);
+});
+
+gulp.task('tests', function (done) {
+    new Server({
+        configFile: __dirname + '/tests/karma.conf.js',
+        singleRun: true
+    }, function (err) {
+        done();
+    }).start();
 });

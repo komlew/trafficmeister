@@ -10,9 +10,7 @@ define([
             type: '',
             brand: '',
             colors: [],
-            img: '',
-            visible: true
+            img: ''
         }
     });
-
 });

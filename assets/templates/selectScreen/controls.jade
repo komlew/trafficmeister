@@ -1,7 +1,7 @@
 each item in order
-    .row
+    .row.controls__row
         .col-md-4
-            label(for=item.name) #{item.label}
+            label(for=item.name) #{item.label}:
         .col-md-8
             select(disabled=!item.options, name=item.name, role='select2')
                 if item.options
@@ -10,3 +10,11 @@ each item in order
                         option(value=option selected=(item.value === option)) #{option}
                 else
                     option Select an option
+
+.row.controls__row
+    .col-md-12
+        button.btn.btn-sm.btn-danger.pull-right(type='button' role='clearFilters') Clear filters
+
+hr
+label Your choice:
+p.lead(role='result')

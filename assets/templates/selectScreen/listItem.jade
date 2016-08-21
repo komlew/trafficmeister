@@ -1,0 +1,16 @@
+.thumbnail
+    .square
+        img.square__img(src=img alt=brand role='pickBrand')
+    .caption
+        h4(role='pickBrand') #{brand}
+        dl.thumbnailData
+            dt.thumbnailData__title Type:
+            dd
+                span.label.label-primary(role='pickType') #{type}
+            dt.thumbnailData__title Colors:
+            dd
+                if arrayFilters.colors
+                    span.label.label-info.thumbnailData__label(role='pickColor') #{arrayFilters.colors}
+                else
+                    each color in colors
+                        span.label.label-info.thumbnailData__label(data-color=color role='pickColor') #{color}
