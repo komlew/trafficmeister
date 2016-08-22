@@ -32,7 +32,7 @@ define([
             this.fetchingData();
 
             this.model = new MainModel();
-            this.model.get('collection').on('sort', function () {
+            this.model.get('collection').off('reset').on('reset', function () {
                 self.model.setFilters();
                 self.renderControls();
                 self.renderList();
@@ -56,7 +56,7 @@ define([
 
             $.when(this.addingRegions, this.getServerData).done(function (regions, data) {
                 var collection = self.model.get('collection');
-                collection.set(data).sort();
+                collection.reset(data).sort();
             });
         },
 

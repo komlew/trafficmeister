@@ -34,7 +34,7 @@ define([
         });
 
         app.on('start', function () {
-            var router = new AppRouter({
+            app.router = new AppRouter({
                 controller: new AppController({
                     layout: app.layout
                 })

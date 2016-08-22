@@ -6,7 +6,8 @@ define([
 
     return Marionette.AppRouter.extend({
         appRoutes: {
-            '': 'default'
+            '': 'default',
+            ':anything(/:else)(/)': 'default'
         }
     });
 });

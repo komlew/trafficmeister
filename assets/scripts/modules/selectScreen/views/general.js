@@ -4,10 +4,6 @@ define([
     'use strict';
 
     return Marionette.ItemView.extend({
-        template: 'selectScreen/general',
-
-        templateHelpers: function () {
-
-        }
+        template: 'selectScreen/general'
     });
 });
